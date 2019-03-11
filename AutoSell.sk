@@ -64,7 +64,7 @@ function menuAutoSell(p: player):
 		loop size of {_var::*} times:
 			replace "%%price%%" with "%{_price}%" in {_var::%loop-number%}
 		set {_iitem} to {_item} parsed as item
-		format gui slot {_slot} of {_p} with {_iitem} named "%{_name}%" with lore "%{_var::*}%" to nothing
+		format gui slot {_slot} of {_p} with {_iitem} named "%{_name}%" with lore {_var::*} to nothing
 		if getAutoSell({_p}, {_id}) isn't set:
 			set yaml value "players.%{_p}%.%{_id}%" from "players" to false
 			save yaml "players"
