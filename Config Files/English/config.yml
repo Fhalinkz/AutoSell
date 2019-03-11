@@ -1,0 +1,20 @@
+items_lore:
+- 'Price: %price%'
+
+Progress_Message: '&a%amount% &fof &a%item% &fsuccesfully sold for &a%price%'
+
+NoPermission_Message: '&6AutoSell | &4You don''t have permission to use this item'
+
+ByPassPermission: autosell.*
+
+buttons:
+    AutoSell_active:
+        display_item: Lime Dye
+        display_name: '&aActive'
+        lore:
+        - Left-Click to active AutoSell
+    AutoSell_deactive:
+        display_item: Gray Dye
+        display_name: '&4Deactive'
+        lore:
+        - Left-Click to deactive AutoSell
