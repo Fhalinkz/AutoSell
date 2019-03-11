@@ -1,0 +1,20 @@
+items_lore:
+- 'Fiyatı: %price%'
+
+Progress_Message: '&a%amount% &fadet &a%item% &a%price% fiyatına satıldı.'
+
+NoPermission_Message: '&6AutoSell | &4Bu itemin otosatısını acabilmek icin yeterli izne sahip degilsin'
+
+ByPassPermission: autosell.*
+
+buttons:
+    AutoSell_active:
+        display_item: Lime Dye
+        display_name: '&aAktif'
+        lore:
+        - Sol-tık ile Otomatik Satışı aktif et
+    AutoSell_deactive:
+        display_item: Gray Dye
+        display_name: '&4Deactive'
+        lore:
+        - Sol-tık ile Otomatik Satışı deAktif et
