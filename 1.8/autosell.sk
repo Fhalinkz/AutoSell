@@ -1,0 +1,159 @@
+options:
+	version: 1.0
+	command: autosell
+
+on load:
+	load yaml "plugins/AutoSell/players.yml" as "players"
+	load yaml "plugins/AutoSell/items.yml" as "items"
+	load yaml "plugins/AutoSell/config.yml" as "AutoSell"
+	if yaml "AutoSell" is empty:
+		add "Price: %%price%%" to yaml list "items_lore" from "AutoSell"
+		set yaml value "Progress_Message" from "AutoSell" to "&a%%amount%% &fof &a%%item%% &fsuccesfully sold for &a%%price%%"
+		set yaml value "NoPermission_Message" from "AutoSell" to "&6AutoSell | &4You don't have permission to use this item"
+		Set yaml value "ByPassPermission" from "AutoSell" to "autosell.*"
+		set yaml value "buttons.AutoSell_active.display_item" from "AutoSell" to "limedye"
+		set yaml value "buttons.AutoSell_active.display_name" from "AutoSell" to "&aActive"
+		add "Left-Click to active AutoSell" to yaml list "buttons.AutoSell_active.lore" from "AutoSell"
+		set yaml value "buttons.AutoSell_deactive.display_item" from "AutoSell" to "graydye"
+		set yaml value "buttons.AutoSell_deactive.display_name" from "AutoSell" to "&4Deactive"
+		add "Left-Click to deactive AutoSell" to yaml list "buttons.AutoSell_deactive.lore" from "AutoSell"
+		save yaml "AutoSell"
+		
+	if yaml "items" is empty:
+		set yaml value "items.Lapis_Lazuli.display_name" from "items" to "Lapis"
+		set yaml value "items.Lapis_Lazuli.display_item" from "items" to "Lapis Lazuli"
+		set yaml value "items.Lapis_Lazuli.permission" from "items" to "autosell.lapis"
+		set yaml value "items.Lapis_Lazuli.amount" from "items" to 64
+		set yaml value "items.Lapis_Lazuli.price" from "items" to 64000
+		set yaml value "items.Lapis_Lazuli.slot" from "items" to 10
+		set yaml value "items.Lapis_Lazuli.id" from "items" to 1
+		set yaml value "items.Lapis_Lazuli.event-item" from "items" to "lapis lazuli ore"
+		set yaml value "items.Lapis_Lazuli.event-item-drop" from "items" to "lapis lazuli"
+		set yaml value "items.Diamond.display_name" from "items" to "Diamond"
+		set yaml value "items.Diamond.display_item" from "items" to "Diamond"
+		set yaml value "items.Diamond.permission" from "items" to "autosell.diamond"
+		set yaml value "items.Diamond.amount" from "items" to 64
+		set yaml value "items.Diamond.price" from "items" to 64000
+		set yaml value "items.Diamond.slot" from "items" to 12
+		set yaml value "items.Diamond.id" from "items" to 2
+		set yaml value "items.Diamond.event-item" from "items" to "Diamond Ore"
+		set yaml value "items.Diamond.event-item-drop" from "items" to "Diamond"
+		set yaml value "items.Emerald.display_name" from "items" to "Emerald"
+		set yaml value "items.Emerald.display_item" from "items" to "Emerald"
+		set yaml value "items.Emerald.permission" from "items" to "autosell.diamond"
+		set yaml value "items.Emerald.amount" from "items" to 64
+		set yaml value "items.Emerald.price" from "items" to 64000
+		set yaml value "items.Emerald.slot" from "items" to 14
+		set yaml value "items.Emerald.id" from "items" to 3
+		set yaml value "items.Emerald.event-item" from "items" to "Emerald Ore"
+		set yaml value "items.Emerald.event-item-drop" from "items" to "Emerald"
+		save yaml "items"
+		
+function menuAutoSell(p: player):
+	open virtual chest with size 6 named "AutoSell" to {_p}
+	format gui slot (integers between 0 and 54) of {_p} with black stained glass pane named "skAutoSell by Fhalinkz" to nothing
+	loop yaml nodes with keys "items" from "items":
+		set {_slot} to getAutoSell2("%loop-value%", "slot")
+		set {_name} to getAutoSell2("%loop-value%", "display_name")
+		set {_item} to getAutoSell2("%loop-value%", "display_item")
+		set {_amount} to getAutoSell2("%loop-value%", "amount")
+		set {_price} to getAutoSell2("%loop-value%", "price")
+		set {_id} to getAutoSell2("%loop-value%", "id")
+		set {_perm} to getAutoSell2("%loop-value%", "permission")
+		set {_var::*} to yaml list "items_lore" from "AutoSell"
+		loop size of {_var::*} times:
+			replace "%%price%%" with "%{_price}%" in {_var::%loop-number%}
+		set {_iitem} to {_item} parsed as item
+		format gui slot {_slot} of {_p} with {_iitem} named "%{_name}%" with lore (join {_var::*} with "||") to nothing
+		if getAutoSell({_p}, {_id}) isn't set:
+			set yaml value "players.%{_p}%.%{_id}%" from "players" to false
+			save yaml "players"
+			wait a tick
+		if getAutoSell({_p}, {_id}) is false:
+			set {_autosellon::*} to yaml list "buttons.AutoSell_active.lore" from "AutoSell"
+			set {_autosell::D::name} to yaml value "buttons.AutoSell_deactive.display_name" from "AutoSell"
+			set {_autosell::D::item} to yaml value "buttons.AutoSell_deactive.display_item" from "AutoSell" parsed as item
+			format gui slot ({_slot} + 9) of {_p} with {_autosell::D::item} named "%{_autosell::D::name}%" with lore (join {_autosellon::*} with "||") to run function autosellOn({_p}, {_id}, {_perm})
+		
+		if getAutoSell({_p}, {_id}) is true:
+			set {_autosellof::*} to yaml list "buttons.AutoSell_deactive.lore" from "AutoSell"
+			set {_autosell::A::name} to yaml value "buttons.AutoSell_active.display_name" from "AutoSell"
+			set {_autosell::A::item} to yaml value "buttons.AutoSell_active.display_item" from "AutoSell" parsed as item
+			format gui slot ({_slot} + 9) of {_p} with {_autosell::A::item} named "%{_autosell::A::name}%" with lore (join {_autosellof::*} with "||") to run function autosellOff({_p}, {_id}, {_perm}) 
+	
+function getAutoSellItem(item: item) :: item:
+	set {_loop} to getAutoSellLoop({_item})
+	set {_testitem} to yaml value "items.%{_loop}%.event-item" from "items" parsed as item
+	if {_testitem} is {_item}:
+		return {_item}
+
+function getAutoSellLoop(item: item) :: text:
+	loop yaml nodes with keys "items" from "items":
+		set {_event.item} to yaml value "items.%loop-value%.event-item" from "items" parsed as item
+		if {_event.item} == {_item}:
+			set {_loop} to loop-value
+			return {_loop}
+			stop loop
+			
+on break:
+	if event-block is getAutoSellItem(event-block):
+		set {_loop} to getAutoSellLoop(event-block)
+		set {_id} to yaml value "items.%{_loop}%.id" from "items"
+		if getAutoSell(player, {_id}) is true:
+			set {_amount} to yaml value "items.%{_loop}%.amount" from "items"
+			set {_price} to yaml value "items.%{_loop}%.price" from "items"
+			set {_event.drop} to yaml value "items.%{_loop}%.event-item-drop" from "items" parsed as item
+			set {_pamount} to amount of {_event.drop} in player's inventory
+			if {_pamount} is greater than or equal to {_amount}:
+				remove {_amount} of {_event.drop} from player's inventory
+				execute console command "eco give %player% %{_price}%"
+				set {_message} to yaml value "Progress_Message" from "AutoSell"
+				replace "%%item%%" with "%{_event.drop}%" in {_message}
+				replace "%%price%%" with "%{_price}%" in {_message}
+				replace "%%amount%%" with "%{_amount}%" in {_message}
+				send action bar "%{_message}%" to player
+
+on inventory close:
+	delAutoSell(player)
+on join:
+	delAutoSell(player)
+on quit:
+	delAutoSell(player)
+		
+function delAutoSell(p: player):
+	loop yaml nodes with keys "items" from "items":
+		set {_id} to getAutoSell2("%loop-value%", "id")
+		if getAutoSell({_p}, {_id}) is false:
+			delete yaml value "players.%{_p}%.%{_id}%" from "players"
+			save yaml "players"
+	
+function getAutoSell2(item: text, info: text) :: object:
+	set {_info} to yaml value "items.%{_item}%.%{_info}%" from "items"
+	return {_info}
+		
+function getAutoSell(p: player, id: number) :: boolean:
+	return yaml value "players.%{_p}%.%{_id}%" from "players"
+			
+function autosellOn(p: player, id: number, perm: text):
+	set {_permission} to yaml value "ByPassPermission" from "AutoSell"
+	if {_p} has permission "%{_perm}%":
+		set yaml value "players.%{_p}%.%{_id}%" from "players" to true
+		save yaml "players"
+		menuAutoSell({_p})
+	else:
+		set {_message} to yaml value "NoPermission_Message" from "AutoSell"
+		send "%{_message}%" to {_p}
+	if {_p} has permission "%{_permission}%":
+		set yaml value "players.%{_p}%.%{_id}%" from "players" to true
+		save yaml "players"
+		menuAutoSell({_p})
+			
+function autosellOff(p: player, id: number):
+	set yaml value "players.%{_p}%.%{_id}%" from "players" to false
+	save yaml "players"
+	menuAutoSell({_p})
+	
+command /{@command} [<text>]:
+	trigger:
+		if arg-1 isn't set:
+			menuAutoSell(player)
