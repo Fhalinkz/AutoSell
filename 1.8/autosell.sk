@@ -111,7 +111,7 @@ on break:
 				replace "%%item%%" with "%{_event.drop}%" in {_message}
 				replace "%%price%%" with "%{_price}%" in {_message}
 				replace "%%amount%%" with "%{_amount}%" in {_message}
-				send action bar "%{_message}%" to player
+				send an action bar string {_message} to player
 
 on inventory close:
 	delAutoSell(player)
