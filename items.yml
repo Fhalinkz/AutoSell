@@ -1,71 +1,109 @@
 items:
-    Lapis_Lazuli:
-        display_name: Lapis
-        display_item: Lapis Lazuli
-        permission: autosell.lapis
-        amount: 64
-        price: 64000
+    category1:
+        name: Madenler
+        lore:
+        - Kategoriyi Görüntülemek İçin Sol Tıkla
         slot: 10
+        item: Emerald
         id: 1
-        event-item: lapis lazuli ore
-        event-item-drop: lapis lazuli
-    Diamond:
-        display_name: Diamond
-        display_item: Diamond
-        permission: autosell.diamond
-        amount: 64
-        price: 64000
-        slot: 12
+        permission: autosell.category.mines
+        items:
+            Lapis_Lazuli:
+                display_name: Lapis
+                display_item: Lapis Lazuli
+                permission: autosell.lapis
+                amount: 64
+                price: 64000
+                slot: 10
+                id: 1
+                event-item: lapis lazuli ore
+                event-item-drop: lapis lazuli
+            Diamond:
+                display_name: Diamond
+                display_item: Diamond
+                permission: autosell.items.diamond
+                amount: 64
+                price: 64000
+                slot: 12
+                id: 2
+                event-item: Diamond Ore
+                event-item-drop: Diamond
+            Emerald:
+                display_name: Emerald
+                display_item: Emerald
+                permission: autosell.items.emerald
+                amount: 64
+                price: 64000
+                slot: 14
+                id: 3
+                event-item: Emerald Ore
+                event-item-drop: Emerald
+            Iron_Ingot:
+                display_name: Iron Ingot
+                display_item: iron ingot
+                permission: autosell.items.iron
+                amount: 64
+                price: 64000
+                slot: 16
+                id: 4
+                event-item: iron ore
+                event-item-drop: iron ingot
+            Gold_Ingot:
+                display_name: Gold Ingot
+                display_item: golden ingot
+                permission: autosell.items.gold
+                amount: 64
+                price: 64000
+                slot: 29
+                id: 5
+                event-item: Gold Ore
+                event-item-drop: golden ingot
+            Redstone:
+                display_name: Redstone
+                display_item: Redstone
+                permission: autosell.items.redstone
+                amount: 64
+                price: 64000
+                slot: 31
+                id: 6
+                event-item: Redstone Ore
+                event-item-drop: Redstone
+            Coal:
+                display_name: Coal
+                display_item: Coal
+                permission: autosell.items.coal
+                amount: 64
+                price: 64000
+                slot: 33
+                id: 7
+                event-item: coal ore
+                event-item-drop: Coal
+    category2:
+        name: Woods
+        lore:
+        - Left-Click to show category
+        slot: 13
+        item: Oak Wood Planks
         id: 2
-        event-item: Diamond Ore
-        event-item-drop: Diamond
-    Emerald:
-        display_name: Emerald
-        display_item: Emerald
-        permission: autosell.emerald
-        amount: 64
-        price: 64000
-        slot: 14
-        id: 3
-        event-item: Emerald Ore
-        event-item-drop: Emerald
-    Iron_Ingot:
-        display_name: Iron Ingot
-        display_item: iron ingot
-        permission: autosell.iron
-        amount: 64
-        price: 64000
-        slot: 16
-        id: 4
-        event-item: iron ore
-        event-item-drop: iron ingot
-    Gold_Ingot:
-        display_name: Gold Ingot
-        display_item: golden ingot
-        permission: autosell.gold
-        amount: 64
-        price: 64000
-        slot: 29
-        id: 5
-        event-item: Gold Ore
-        event-item-drop: golden ingot
-    Redstone:
-        display_name: Redstone
-        display_item: Redstone
-        permission: autosell.redstone
-        amount: 64
-        price: 64000
-        slot: 31
-        id: 6
-        event-item: Redstone Ore
-        event-item-drop: Redstone
-    Coal:
-        display_name: Coal
-        display_item: Coal
-        permission: autosell.coal
-        amount: 64
-        price: 64000
-        slot: 33
-        id: 7
-        event-item: coal ore
-        event-item-drop: Coal
+        permission: autosell.category.woods
+        items:
+            oakwoodplanks:
+                display_name: Oak Wood Planks
+                display_item: Oak Wood Planks
+                permission: autosell.items.oakplanks
+                amount: 64
+                price: 64000
+                slot: 10
+                id: 8
+                event-item: oak wood planks
+                event-item-drop: oak wood planks
+            spruceoakplanks:
+                display_name: spruce wood planks
+                display_item: spruce wood planks
+                permission: autosell.items.spruceplanks
+                amount: 64
+                price: 64000
+                slot: 12
+                id: 9
+                event-item: spruce wood planks
+                event-item-drop: spruce wood planks
