@@ -1,8 +1,8 @@
 items:
     category1:
-        name: Madenler
+        name: Mines
         lore:
-        - Kategoriyi Görüntülemek İçin Sol Tıkla
+        - Left-Click to show category
         slot: 10
         item: Emerald
         id: 1
