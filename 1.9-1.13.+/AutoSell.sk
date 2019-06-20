@@ -35,7 +35,9 @@ function mainMenuAutoSell(p: player):
 		set {_var::*} to yaml list "items.%loop-value%.lore" from "items"
 		set {_iitem} to {_item} parsed as item
 		if {_p} has permission {_permission}:
-			format gui slot {_slot} of {_p} with {_iitem} named "%{_name}%" with lore {_var::*} to close then run function menuAutoSell({_p}, {_id})
+			format gui slot {_slot} of {_p} with {_iitem} named "%{_name}%" with lore {_var::*} to close:
+				menuAutoSell({_p}, {_id})
+				set {autosell::%{_p}%} to getCategoryName({_id}))
 	
 function getCategory(id: number, n: text) :: text:
 	loop yaml nodes with keys "items" from "items":
@@ -107,13 +109,13 @@ function getAutoSellLoop(item: item) :: text:
 			stop loop
 			
 on break:
-	if event-block is getAutoSellItem(event-block):
-		set {_loop} to getAutoSellLoop(event-block)
-		set {_id} to yaml value "items.%{_loop}%.id" from "items"
+	if event-block is getAutoSellItem(player, event-block):
+		set {_loop} to getAutoSellLoop(player, event-block)
+		set {_id} to yaml value "items.%{autosell::%player%}%.items.%{_loop}%.id" from "items"
 		if getAutoSell(player, {_id}) is true:
-			set {_amount} to yaml value "items.%{_loop}%.amount" from "items"
-			set {_price} to yaml value "items.%{_loop}%.price" from "items"
-			set {_event.drop} to yaml value "items.%{_loop}%.event-item-drop" from "items" parsed as item
+			set {_amount} to yaml value "items.%{autosell::%player%}%.items.%{_loop}%.amount" from "items"
+			set {_price} to yaml value "items.%{autosell::%player%}%.items.%{_loop}%.price" from "items"
+			set {_event.drop} to yaml value "items.%{autosell::%player%}%.items.%{_loop}%.event-item-drop" from "items" parsed as item
 			set {_pamount} to amount of {_event.drop} in player's inventory
 			if {_pamount} is greater than or equal to {_amount}:
 				remove {_amount} of {_event.drop} from player's inventory
@@ -122,7 +124,7 @@ on break:
 				replace "%%item%%" with "%{_event.drop}%" in {_message}
 				replace "%%price%%" with "%{_price}%" in {_message}
 				replace "%%amount%%" with "%{_amount}%" in {_message}
-				send action bar {_message} to player
+				send an action bar string {_message} to player
 
 on inventory close:
 	delAutoSell(player)
@@ -132,12 +134,13 @@ on quit:
 	delAutoSell(player)
 		
 function delAutoSell(p: player):
-	set {_id} to 0
-	loop yaml nodes with keys "players.%{_p}%" from "players":
-		if getAutoSell({_p}, {_id}) is false:
-			delete yaml value "players.%{_p}%.%{_id}%" from "players"
-			save yaml "players"
+	set {_id} to -1
+	loop 27 times:
 		add 1 to {_id}
+		set {_zaxd} to getAutoSell({_p}, {_id})
+		if {_zaxd} is false:
+			delete yaml value "players.%{_p}%.%{_id}%" from "players"
+	save yaml "players"
 	
 function getAutoSell2(cat: text, item: text, info: text) :: object:
 	set {_info} to yaml value "items.%{_cat}%.items.%{_item}%.%{_info}%" from "items"
