@@ -22,7 +22,7 @@ on load:
 function getAutoSell3(item: text, info: text) :: object:
 	set {_info} to yaml value "items.%{_item}%.%{_info}%" from "items"
 	return {_info}
-		
+
 function mainMenuAutoSell(p: player):
 	open virtual chest with size 6 named "&6AutoSell &8>> &aMain Menu" to {_p}
 	format gui slot (integers between 0 and 54) of {_p} with black stained glass pane named "skAutoSell by Fhalinkz" to nothing
@@ -35,7 +35,9 @@ function mainMenuAutoSell(p: player):
 		set {_var::*} to yaml list "items.%loop-value%.lore" from "items"
 		set {_iitem} to {_item} parsed as item
 		if {_p} has permission {_permission}:
-			format gui slot {_slot} of {_p} with {_iitem} named "%{_name}%" with lore (join {_var::*} with "||") to close then run function menuAutoSell({_p}, {_id})
+			format gui slot {_slot} of {_p} with {_iitem} named "%{_name}%" with lore (join {_var::*} with "||") to close:
+				menuAutoSell({_p}, {_id})
+				set {autosell::%{_p}%} to getCategoryName({_id})
 	
 function getCategory(id: number, n: text) :: text:
 	loop yaml nodes with keys "items" from "items":
@@ -92,28 +94,26 @@ function menuAutoSell(p: player, s: number):
 				wait a tick
 				menuAutoSell({_p}, {_s})
 	
-function getAutoSellItem(item: item) :: item:
-	set {_loop} to getAutoSellLoop({_item})
-	set {_testitem} to yaml value "items.%{_loop}%.event-item" from "items" parsed as item
-	if {_testitem} is {_item}:
-		return {_item}
+function getAutoSellItem(p: player, item: block) :: item:
+	loop yaml nodes with keys "items.%{autosell::%{_p}%}%.items" from "items":
+		set {_testitem} to yaml value "items.%{autosell::%{_p}%}%.items.%loop-value%.event-item" from "items" parsed as item
+		if {_testitem} is {_item}:
+			return {_testitem}
 
-function getAutoSellLoop(item: item) :: text:
-	loop yaml nodes with keys "items" from "items":
-		set {_event.item} to yaml value "items.%loop-value%.event-item" from "items" parsed as item
-		if {_event.item} == {_item}:
-			set {_loop} to loop-value
-			return {_loop}
-			stop loop
+function getAutoSellLoop(p: player, item: block) :: text:
+	loop yaml nodes with keys "items.%{autosell::%{_p}%}%.items" from "items":
+		set {_testitem} to yaml value "items.%{autosell::%{_p}%}%.items.%loop-value%.event-item" from "items" parsed as item
+		if {_testitem} is {_item}:
+			return "%loop-value%"
 			
 on break:
-	if event-block is getAutoSellItem(event-block):
-		set {_loop} to getAutoSellLoop(event-block)
-		set {_id} to yaml value "items.%{_loop}%.id" from "items"
+	if event-block is getAutoSellItem(player, event-block):
+		set {_loop} to getAutoSellLoop(player, event-block)
+		set {_id} to yaml value "items.%{autosell::%player%}%.items.%{_loop}%.id" from "items"
 		if getAutoSell(player, {_id}) is true:
-			set {_amount} to yaml value "items.%{_loop}%.amount" from "items"
-			set {_price} to yaml value "items.%{_loop}%.price" from "items"
-			set {_event.drop} to yaml value "items.%{_loop}%.event-item-drop" from "items" parsed as item
+			set {_amount} to yaml value "items.%{autosell::%player%}%.items.%{_loop}%.amount" from "items"
+			set {_price} to yaml value "items.%{autosell::%player%}%.items.%{_loop}%.price" from "items"
+			set {_event.drop} to yaml value "items.%{autosell::%player%}%.items.%{_loop}%.event-item-drop" from "items" parsed as item
 			set {_pamount} to amount of {_event.drop} in player's inventory
 			if {_pamount} is greater than or equal to {_amount}:
 				remove {_amount} of {_event.drop} from player's inventory
@@ -132,12 +132,13 @@ on quit:
 	delAutoSell(player)
 		
 function delAutoSell(p: player):
-	set {_id} to 0
-	loop yaml nodes with keys "players.%{_p}%" from "players":
-		if getAutoSell({_p}, {_id}) is false:
-			delete yaml value "players.%{_p}%.%{_id}%" from "players"
-			save yaml "players"
+	set {_id} to -1
+	loop 27 times:
 		add 1 to {_id}
+		set {_zaxd} to getAutoSell({_p}, {_id})
+		if {_zaxd} is false:
+			delete yaml value "players.%{_p}%.%{_id}%" from "players"
+	save yaml "players"
 	
 function getAutoSell2(cat: text, item: text, info: text) :: object:
 	set {_info} to yaml value "items.%{_cat}%.items.%{_item}%.%{_info}%" from "items"
